@@ -1,13 +1,13 @@
 import { GameState, GameMode, Difficulty } from '../types/game.ts';
 import { PlayerSide } from '../types/entities.ts';
-import { SplashScreen } from './screens/SplashScreen.ts';
+import { SplashScreen, SelectedCharacter } from './screens/SplashScreen.ts';
 import { InstructionsScreen } from './screens/InstructionsScreen.ts';
 import { GameScreen } from './screens/GameScreen.ts';
 import { GameOverScreen } from './screens/GameOverScreen.ts';
 import { HamburgerMenu } from './components/HamburgerMenu.ts';
 
 export interface UICallbacks {
-  onStartGame: (mode: GameMode, difficulty: Difficulty) => void;
+  onStartGame: (mode: GameMode, difficulty: Difficulty, character: SelectedCharacter) => void;
   onRestart: () => void;
   onResume: () => void;
   onQuit: () => void;
@@ -30,8 +30,8 @@ export class UIManager {
   showSplash(): void {
     this.clearScreen();
     const splash = new SplashScreen({
-      onStart: (mode, difficulty) => {
-        this.callbacks.onStartGame(mode, difficulty);
+      onStart: (mode, difficulty, character) => {
+        this.callbacks.onStartGame(mode, difficulty, character);
       },
       onInstructions: () => this.showInstructions(),
     });

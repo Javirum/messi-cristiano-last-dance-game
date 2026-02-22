@@ -13,6 +13,7 @@ import { AIController } from '../ai/AIController.ts';
 import { UIManager } from '../ui/UIManager.ts';
 import { GameScreen } from '../ui/screens/GameScreen.ts';
 import { PlayerSide } from '../types/entities.ts';
+import { SelectedCharacter } from '../ui/screens/SplashScreen.ts';
 
 export class GameEngine {
   private state: GameState = GameState.LOADING;
@@ -37,6 +38,7 @@ export class GameEngine {
   private lastTimestamp = 0;
   private goalCelebrationTimer: ReturnType<typeof setTimeout> | null = null;
   private isPaused = false;
+  private humanSide: PlayerSide = 'left';
 
   constructor(app: HTMLElement) {
     this.eventBus = new EventBus();
@@ -45,7 +47,7 @@ export class GameEngine {
     this.physicsEngine = new PhysicsEngine(this.eventBus);
 
     this.uiManager = new UIManager(app, {
-      onStartGame: (mode, difficulty) => this.startGame(mode, difficulty),
+      onStartGame: (mode, difficulty, character) => this.startGame(mode, difficulty, character),
       onRestart: () => this.restart(),
       onResume: () => this.resume(),
       onQuit: () => this.quit(),
@@ -65,7 +67,7 @@ export class GameEngine {
     this.uiManager.showSplash();
   }
 
-  private startGame(mode: GameMode, difficulty: Difficulty): void {
+  private startGame(mode: GameMode, difficulty: Difficulty, character: SelectedCharacter = 'cristiano'): void {
     // Create game screen
     this.gameScreen = this.uiManager.showGame();
     const ctx = this.gameScreen.getContext();
@@ -77,6 +79,10 @@ export class GameEngine {
     this.ball = new Ball(this.assetLoader);
     this.goalLeft = new Goal('left');
     this.goalRight = new Goal('right');
+
+    // Determine which side the human controls in PVE
+    // Cristiano is always left, Messi is always right
+    this.humanSide = (mode === GameMode.PVE && character === 'messi') ? 'right' : 'left';
 
     // AI controller for PvE mode
     if (mode === GameMode.PVE) {
@@ -125,10 +131,13 @@ export class GameEngine {
     const ball = this.ball!;
 
     // Read input
-    p1.input = this.inputManager.getPlayerInput(P1_KEYS);
     if (this.aiController) {
-      p2.input = this.aiController.update(p2, ball, timestamp);
+      const humanPlayer = this.humanSide === 'left' ? p1 : p2;
+      const aiPlayer = this.humanSide === 'left' ? p2 : p1;
+      humanPlayer.input = this.inputManager.getPlayerInput(P1_KEYS);
+      aiPlayer.input = this.aiController.update(aiPlayer, ball, timestamp);
     } else {
+      p1.input = this.inputManager.getPlayerInput(P1_KEYS);
       p2.input = this.inputManager.getPlayerInput(P2_KEYS);
     }
 
