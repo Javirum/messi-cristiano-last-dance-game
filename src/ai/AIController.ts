@@ -14,7 +14,7 @@ export class AIController {
     left: false,
     right: false,
   };
-  private deadZone = 8;
+  private deadZone = 16;
 
   constructor(difficulty: Difficulty) {
     this.difficulty = difficulty;
@@ -82,9 +82,9 @@ export class AIController {
 
     // Add imprecision for easier difficulties
     if (this.difficulty === Difficulty.EASY) {
-      predictedY += (Math.random() - 0.5) * 60;
+      predictedY += (Math.random() - 0.5) * 120;
     } else if (this.difficulty === Difficulty.MEDIUM) {
-      predictedY += (Math.random() - 0.5) * 25;
+      predictedY += (Math.random() - 0.5) * 50;
     }
 
     return predictedY;
@@ -99,15 +99,15 @@ export class AIController {
     if (this.difficulty === Difficulty.HARD && !isDefensiveSituation) {
       // Aggressive: push past midfield
       return player.side === 'right'
-        ? midfield + 40
-        : midfield - 40;
+        ? midfield + 80
+        : midfield - 80;
     }
 
     // Defensive: stay near goal
     if (isDefensiveSituation) {
       return player.side === 'right'
-        ? CANVAS.WIDTH - 80
-        : 80;
+        ? CANVAS.WIDTH - 160
+        : 160;
     }
 
     // Default position

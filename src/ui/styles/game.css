@@ -1,6 +1,7 @@
 /* Game Screen */
 .game-screen {
-  background-color: #0a0a1a;
+  background-color: #050510;
+  overflow: hidden;
 }
 
 .game-screen__stadium {
@@ -9,19 +10,69 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #1a3a1a 0%, #0d2d0d 50%, #1a3a1a 100%);
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(231, 76, 60, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 50%, rgba(52, 152, 219, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 0%, rgba(255, 255, 0, 0.05) 0%, transparent 40%),
+    linear-gradient(180deg, #0a0a20 0%, #0d1a0d 40%, #0a1a0a 60%, #0a0a20 100%);
   z-index: 0;
 }
 
+/* Animated stadium lights */
+.game-screen__stadium::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.03) 0%, transparent 20%),
+    radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.03) 0%, transparent 20%),
+    radial-gradient(circle at 15% 85%, rgba(255, 255, 255, 0.02) 0%, transparent 15%),
+    radial-gradient(circle at 85% 85%, rgba(255, 255, 255, 0.02) 0%, transparent 15%);
+  animation: stadiumLights 8s ease-in-out infinite alternate;
+  z-index: 0;
+}
+
+/* Subtle crowd silhouette band */
+.game-screen__stadium::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(180deg,
+      rgba(0, 0, 0, 0.6) 0%,
+      rgba(0, 0, 0, 0.2) 15%,
+      transparent 25%,
+      transparent 75%,
+      rgba(0, 0, 0, 0.2) 85%,
+      rgba(0, 0, 0, 0.6) 100%
+    );
+  z-index: 0;
+}
+
+@keyframes stadiumLights {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
 .game-screen__canvas {
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  background-image: url('/images/field.png');
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  background-image: url('../../public/images/field.png');
   background-repeat: no-repeat;
   background-size: cover;
   z-index: 1;
   position: relative;
-  border-radius: 4px;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+  box-shadow:
+    0 0 40px rgba(0, 255, 100, 0.15),
+    0 0 80px rgba(0, 255, 100, 0.05),
+    inset 0 0 60px rgba(0, 0, 0, 0.3);
 }
 
 /* Scoreboard */
@@ -29,36 +80,46 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15px;
-  margin-top: 20px;
-  font-size: 1em;
+  gap: 20px;
+  margin-top: 18px;
+  font-size: 1.1em;
   z-index: 1;
   position: relative;
+  padding: 10px 30px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
 }
 
 .scoreboard__name {
   font-size: 0.7em;
   color: #ccc;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .scoreboard__name--left {
-  color: #e74c3c;
+  color: #ff4444;
+  text-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
 }
 
 .scoreboard__name--right {
-  color: #3498db;
+  color: #44aaff;
+  text-shadow: 0 0 10px rgba(68, 170, 255, 0.5);
 }
 
 .scoreboard__score {
-  font-size: 1.5em;
+  font-size: 1.8em;
   color: #ffff00;
-  min-width: 30px;
+  min-width: 40px;
   text-align: center;
+  text-shadow: 0 0 15px rgba(255, 255, 0, 0.6);
 }
 
 .scoreboard__separator {
-  font-size: 1.2em;
-  color: #666;
+  font-size: 1.4em;
+  color: rgba(255, 255, 255, 0.3);
 }
 
 /* Commentary Overlay */
@@ -67,8 +128,8 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  background: rgba(0, 0, 0, 0.75);
-  padding: 12px 20px;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.85) 30%);
+  padding: 20px 20px 14px;
   z-index: 50;
   transition: opacity 1s ease;
 }
@@ -88,6 +149,7 @@
   line-height: 1.6;
   margin: 0;
   text-align: center;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
 }
 
 /* Pause Overlay */
@@ -98,6 +160,7 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
   z-index: 60;
   display: flex;
   align-items: center;
@@ -112,4 +175,5 @@
   font-size: 2em;
   color: #ffff00;
   margin-bottom: 30px;
+  text-shadow: 0 0 20px rgba(255, 255, 0, 0.5);
 }

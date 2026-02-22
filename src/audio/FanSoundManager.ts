@@ -8,7 +8,7 @@ import {
   GameOverPayload,
 } from '../types/events.ts';
 
-const AUDIO_BASE = '/audio/';
+const AUDIO_BASE = `${import.meta.env.BASE_URL}audio/`;
 
 const FAN_SOUNDS = {
   'crowd-ambient': `${AUDIO_BASE}crowd-ambient.mp3`,

@@ -152,7 +152,7 @@ export class PhysicsEngine {
     goalLeft: Goal,
     goalRight: Goal,
   ): void {
-    const nearThreshold = 15;
+    const nearThreshold = 30;
 
     // Near miss right goal
     if (
@@ -163,7 +163,7 @@ export class PhysicsEngine {
         Math.abs(ball.position.y - goalRight.yTop),
         Math.abs(ball.position.y - goalRight.yBottom),
       );
-      if (distToGoalEdge < 30 && Math.abs(ball.velocity.x) > 1) {
+      if (distToGoalEdge < 60 && Math.abs(ball.velocity.x) > 1) {
         this.eventBus.emit(GameEvent.NEAR_MISS, {
           side: 'right' as PlayerSide,
           distance: distToGoalEdge,
@@ -180,7 +180,7 @@ export class PhysicsEngine {
         Math.abs(ball.position.y - goalLeft.yTop),
         Math.abs(ball.position.y - goalLeft.yBottom),
       );
-      if (distToGoalEdge < 30 && Math.abs(ball.velocity.x) > 1) {
+      if (distToGoalEdge < 60 && Math.abs(ball.velocity.x) > 1) {
         this.eventBus.emit(GameEvent.NEAR_MISS, {
           side: 'left' as PlayerSide,
           distance: distToGoalEdge,

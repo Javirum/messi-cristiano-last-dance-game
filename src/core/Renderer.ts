@@ -42,7 +42,7 @@ export class Renderer {
     // Center dot
     this.ctx.fillStyle = GAME.CENTER_LINE_COLOR;
     this.ctx.beginPath();
-    this.ctx.arc(CANVAS.WIDTH / 2, CANVAS.HEIGHT / 2, 4, 0, Math.PI * 2);
+    this.ctx.arc(CANVAS.WIDTH / 2, CANVAS.HEIGHT / 2, 8, 0, Math.PI * 2);
     this.ctx.fill();
     this.ctx.closePath();
     this.ctx.restore();
@@ -81,14 +81,14 @@ export class Renderer {
     this.ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
     this.ctx.fillRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
     this.ctx.fillStyle = '#ffffff';
-    this.ctx.font = '24px "Press Start 2P"';
+    this.ctx.font = '40px "Press Start 2P"';
     this.ctx.textAlign = 'center';
-    this.ctx.fillText('PAUSED', CANVAS.WIDTH / 2, CANVAS.HEIGHT / 2 - 20);
-    this.ctx.font = '12px "Press Start 2P"';
+    this.ctx.fillText('PAUSED', CANVAS.WIDTH / 2, CANVAS.HEIGHT / 2 - 30);
+    this.ctx.font = '20px "Press Start 2P"';
     this.ctx.fillText(
       'Press ESC to resume',
       CANVAS.WIDTH / 2,
-      CANVAS.HEIGHT / 2 + 20,
+      CANVAS.HEIGHT / 2 + 30,
     );
     this.ctx.restore();
   }
@@ -98,12 +98,12 @@ export class Renderer {
     this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
     this.ctx.fillRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
     this.ctx.fillStyle = '#ffff00';
-    this.ctx.font = '28px "Press Start 2P"';
+    this.ctx.font = '48px "Press Start 2P"';
     this.ctx.textAlign = 'center';
-    this.ctx.fillText('GOAL!', CANVAS.WIDTH / 2, CANVAS.HEIGHT / 2 - 20);
-    this.ctx.font = '14px "Press Start 2P"';
+    this.ctx.fillText('GOAL!', CANVAS.WIDTH / 2, CANVAS.HEIGHT / 2 - 30);
+    this.ctx.font = '24px "Press Start 2P"';
     this.ctx.fillStyle = '#ffffff';
-    this.ctx.fillText(scorerName, CANVAS.WIDTH / 2, CANVAS.HEIGHT / 2 + 20);
+    this.ctx.fillText(scorerName, CANVAS.WIDTH / 2, CANVAS.HEIGHT / 2 + 30);
     this.ctx.restore();
   }
 }
