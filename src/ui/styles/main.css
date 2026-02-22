@@ -1,0 +1,101 @@
+/* Reset */
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: #1a1a2e;
+  color: #ffffff;
+  overflow: hidden;
+}
+
+* {
+  font-family: 'Press Start 2P', cursive;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+/* Buttons */
+.btn {
+  font-family: 'Press Start 2P', cursive;
+  border: 2px solid #ffff00;
+  background-color: #ffff00;
+  color: #1a1a2e;
+  padding: 10px 20px;
+  font-size: 0.75em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.btn:hover {
+  background-color: transparent;
+  color: #ffff00;
+  transform: scale(1.05);
+}
+
+.btn--active {
+  background-color: #ff6b35;
+  border-color: #ff6b35;
+  color: #ffffff;
+}
+
+.btn--start {
+  font-size: 1em;
+  padding: 15px 40px;
+  margin-top: 30px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.btn--mode,
+.btn--diff {
+  margin: 0 5px;
+}
+
+.btn--back,
+.btn--restart,
+.btn--resume,
+.btn--quit {
+  margin: 10px;
+}
+
+/* Screens */
+.screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+kbd {
+  background-color: #333;
+  border: 1px solid #666;
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.8em;
+  color: #ffff00;
+}

@@ -1,0 +1,154 @@
+/* Splash Screen */
+.splash-screen {
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+.splash-screen__bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 0, 0.05) 0%, transparent 70%);
+  z-index: 0;
+}
+
+.splash-screen__content {
+  z-index: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.splash-screen__title {
+  font-size: 2.2em;
+  color: #ffff00;
+  text-shadow: 3px 3px 0 #ff6b35, 6px 6px 0 rgba(0, 0, 0, 0.3);
+  margin: 0;
+  animation: titleFloat 3s ease-in-out infinite;
+}
+
+@keyframes titleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.splash-screen__subtitle {
+  font-size: 0.9em;
+  color: #ff6b35;
+  margin: 0;
+  letter-spacing: 3px;
+}
+
+.splash-screen__mode-select {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.splash-screen__difficulty {
+  display: flex;
+  gap: 10px;
+  transition: opacity 0.3s ease, max-height 0.3s ease;
+}
+
+.splash-screen__difficulty--hidden {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Instructions Screen */
+.instructions-screen {
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.instructions-screen__content {
+  text-align: center;
+  z-index: 1;
+}
+
+.instructions-screen__title {
+  font-size: 1.8em;
+  color: #ffff00;
+  margin-bottom: 30px;
+}
+
+.instructions-screen__columns {
+  display: flex;
+  gap: 60px;
+  margin-bottom: 30px;
+}
+
+.instructions-screen__player h2 {
+  font-size: 0.8em;
+  color: #ff6b35;
+  margin-bottom: 15px;
+}
+
+.instructions-screen__player ul {
+  list-style: none;
+  padding: 0;
+}
+
+.instructions-screen__player li {
+  font-size: 0.65em;
+  margin-bottom: 10px;
+  color: #ccc;
+}
+
+.instructions-screen__note {
+  font-size: 0.55em;
+  color: #888;
+  margin-bottom: 20px;
+}
+
+/* Game Over Screen */
+.game-over-screen {
+  background: linear-gradient(180deg, #1a1a2e 0%, #0f3460 100%);
+}
+
+.game-over-screen__content {
+  text-align: center;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.game-over-screen__title {
+  font-size: 2.5em;
+  color: #ffff00;
+  text-shadow: 3px 3px 0 #ff6b35;
+  margin: 0;
+  animation: titleFloat 2s ease-in-out infinite;
+}
+
+.game-over-screen__subtitle {
+  font-size: 0.8em;
+  color: #ccc;
+  margin: 0;
+}
+
+.game-over-screen__score {
+  font-size: 2em;
+  color: #ffffff;
+  margin: 0;
+}
+
+.game-over-screen__image {
+  max-width: 400px;
+  max-height: 300px;
+  margin: 10px 0;
+}
+
+.game-over-screen__victory-img {
+  max-width: 100%;
+  max-height: 250px;
+  border-radius: 8px;
+  border: 2px solid #ffff00;
+}
