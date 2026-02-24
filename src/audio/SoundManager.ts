@@ -4,13 +4,17 @@ export class SoundManager {
   private muted = false;
   private masterGain: GainNode | null = null;
 
-  private getContext(): AudioContext {
+  getContext(): AudioContext {
     if (!this.audioCtx) {
       this.audioCtx = new AudioContext();
       this.masterGain = this.audioCtx.createGain();
       this.masterGain.connect(this.audioCtx.destination);
     }
     return this.audioCtx;
+  }
+
+  setBuffer(key: string, buffer: AudioBuffer): void {
+    this.sounds.set(key, buffer);
   }
 
   async loadSound(key: string, url: string): Promise<void> {

@@ -1,27 +1,13 @@
 import { EventBus } from '../core/EventBus.ts';
 import { GameEvent } from '../types/events.ts';
 import { SoundManager } from './SoundManager.ts';
+import { generateSounds } from './SyntheticSounds.ts';
 import {
   GoalScoredPayload,
   NearMissPayload,
   RallyLongPayload,
   GameOverPayload,
 } from '../types/events.ts';
-
-const AUDIO_BASE = `${import.meta.env.BASE_URL}audio/`;
-
-const FAN_SOUNDS = {
-  'crowd-ambient': `${AUDIO_BASE}crowd-ambient.mp3`,
-  'crowd-roar-1': `${AUDIO_BASE}crowd-roar-1.mp3`,
-  'crowd-roar-2': `${AUDIO_BASE}crowd-roar-2.mp3`,
-  'crowd-roar-3': `${AUDIO_BASE}crowd-roar-3.mp3`,
-  'crowd-gasp': `${AUDIO_BASE}crowd-gasp.mp3`,
-  'crowd-chant-messi': `${AUDIO_BASE}crowd-chant-messi.mp3`,
-  'crowd-chant-cristiano': `${AUDIO_BASE}crowd-chant-cristiano.mp3`,
-  'crowd-boo': `${AUDIO_BASE}crowd-boo.mp3`,
-  'whistle-start': `${AUDIO_BASE}whistle-start.mp3`,
-  'whistle-end': `${AUDIO_BASE}whistle-end.mp3`,
-};
 
 export class FanSoundManager {
   private soundManager: SoundManager;
@@ -36,10 +22,15 @@ export class FanSoundManager {
   }
 
   async init(): Promise<void> {
-    const loadPromises = Object.entries(FAN_SOUNDS).map(([key, url]) =>
-      this.soundManager.loadSound(key, url),
-    );
-    await Promise.allSettled(loadPromises);
+    try {
+      const ctx = this.soundManager.getContext();
+      const buffers = await generateSounds(ctx);
+      for (const [key, buffer] of buffers) {
+        this.soundManager.setBuffer(key, buffer);
+      }
+    } catch (e) {
+      console.warn('Failed to generate synthetic sounds:', e);
+    }
     this.loaded = true;
     this.attachListeners();
   }

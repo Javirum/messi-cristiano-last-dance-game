@@ -1,80 +1,97 @@
 import express from 'express';
 import cors from 'cors';
+import { readFileSync } from 'fs';
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+// Load .env file from project root
+const __dirname = dirname(fileURLToPath(import.meta.url));
+try {
+  const envFile = readFileSync(resolve(__dirname, '..', '.env'), 'utf-8');
+  for (const line of envFile.split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+    const eqIdx = trimmed.indexOf('=');
+    if (eqIdx === -1) continue;
+    const key = trimmed.slice(0, eqIdx).trim();
+    const value = trimmed.slice(eqIdx + 1).trim();
+    if (!process.env[key]) process.env[key] = value;
+  }
+} catch {
+  // .env file not found — rely on environment variables
+}
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
+const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
+const ELEVENLABS_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || 'pNInz6obpgDQGcFmaJgB';
 
 app.use(cors());
 app.use(express.json());
 
 // Health check
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', hasApiKey: !!ANTHROPIC_API_KEY });
+  res.json({ status: 'ok', hasTtsKey: !!ELEVENLABS_API_KEY });
 });
 
-// Commentary endpoint (streaming)
-app.post('/api/commentary', async (req, res) => {
-  if (!ANTHROPIC_API_KEY) {
-    return res.status(503).json({ error: 'API key not configured' });
+// TTS endpoint — proxies to ElevenLabs TTS API
+app.post('/api/tts', async (req, res) => {
+  if (!ELEVENLABS_API_KEY) {
+    return res.status(503).json({ error: 'ElevenLabs API key not configured' });
   }
 
-  const { system, prompt, stream } = req.body;
+  const { text } = req.body;
+  if (!text) {
+    return res.status(400).json({ error: 'Missing "text" in request body' });
+  }
+
+  const voiceId = ELEVENLABS_VOICE_ID;
+  const url = `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream?output_format=mp3_44100_128`;
 
   try {
-    const response = await fetch(ANTHROPIC_API_URL, {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
+        'xi-api-key': ELEVENLABS_API_KEY,
         'Content-Type': 'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-5-20250929',
-        max_tokens: 150,
-        system: system || '',
-        messages: [{ role: 'user', content: prompt }],
-        stream: stream || false,
+        text,
+        model_id: 'eleven_v3',
+        voice_settings: {
+          stability: 0.0,
+          similarity_boost: 0.65,
+          style: 1.0,
+          use_speaker_boost: true,
+        },
       }),
     });
 
     if (!response.ok) {
       const error = await response.text();
+      console.error('ElevenLabs TTS error:', error);
       return res.status(response.status).json({ error });
     }
 
-    if (stream && response.body) {
-      res.setHeader('Content-Type', 'text/event-stream');
-      res.setHeader('Cache-Control', 'no-cache');
-      res.setHeader('Connection', 'keep-alive');
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-
-      const pump = async () => {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) {
-            res.write('data: [DONE]\n\n');
-            res.end();
-            break;
-          }
-          const chunk = decoder.decode(value, { stream: true });
-          res.write(chunk);
+    res.setHeader('Content-Type', 'audio/mpeg');
+    const reader = response.body.getReader();
+    const pump = async () => {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          res.end();
+          break;
         }
-      };
+        res.write(value);
+      }
+    };
 
-      pump().catch((err) => {
-        console.error('Stream error:', err);
-        res.end();
-      });
-    } else {
-      const data = await response.json();
-      res.json(data);
-    }
+    pump().catch((err) => {
+      console.error('TTS stream error:', err);
+      res.end();
+    });
   } catch (err) {
-    console.error('Commentary API error:', err);
+    console.error('TTS API error:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -95,7 +112,7 @@ app.post('/api/generate-image', async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`API server running on port ${PORT}`);
-  if (!ANTHROPIC_API_KEY) {
-    console.warn('Warning: ANTHROPIC_API_KEY not set. Set it via environment variable.');
+  if (!ELEVENLABS_API_KEY) {
+    console.warn('Warning: ELEVENLABS_API_KEY not set. Voice commentary will be disabled.');
   }
 });

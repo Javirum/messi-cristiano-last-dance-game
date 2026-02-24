@@ -280,6 +280,10 @@ export class GameEngine {
     return this.state;
   }
 
+  getGameScreen(): GameScreen | null {
+    return this.gameScreen;
+  }
+
   private destroy(): void {
     if (this.animFrameId) {
       cancelAnimationFrame(this.animFrameId);

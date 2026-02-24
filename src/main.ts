@@ -5,11 +5,10 @@ import './ui/styles/screens.css';
 
 import { GameEngine } from './core/GameEngine.ts';
 import { FanSoundManager } from './audio/FanSoundManager.ts';
-import { CommentaryService } from './genai/CommentaryService.ts';
+import { PreloadedCommentary } from './audio/PreloadedCommentary.ts';
 import { VictoryService } from './genai/VictoryService.ts';
 import { CelebrationService } from './genai/CelebrationService.ts';
 import { GameEvent } from './types/events.ts';
-import { CommentaryOverlay } from './ui/components/CommentaryOverlay.ts';
 
 async function main(): Promise<void> {
   const app = document.getElementById('app');
@@ -24,16 +23,15 @@ async function main(): Promise<void> {
     console.warn('Fan sounds not available (audio files may be missing)');
   });
 
-  // Phase 2: GenAI commentary — create a persistent overlay and service
-  // that listen to events throughout the app lifecycle
-  const commentaryOverlay = new CommentaryOverlay();
-  app.appendChild(commentaryOverlay.getElement());
-  let commentaryService: CommentaryService | null = null;
+  // Phase 2: Preloaded TTS commentary
+  let commentary: PreloadedCommentary | null = null;
 
   engine.eventBus.on(GameEvent.GAME_STARTED, () => {
-    // Wire up commentary when a game starts
-    if (commentaryService) commentaryService.destroy();
-    commentaryService = new CommentaryService(engine.eventBus, commentaryOverlay);
+    if (commentary) commentary.destroy();
+    const gameScreen = engine.getGameScreen();
+    if (!gameScreen) return;
+    commentary = new PreloadedCommentary(engine.eventBus, gameScreen.commentaryOverlay);
+    commentary.start();
   });
 
   // Phase 2: Victory + Celebration image services

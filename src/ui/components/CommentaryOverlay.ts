@@ -42,29 +42,6 @@ export class CommentaryOverlay {
     }, durationMs);
   }
 
-  streamCharacter(char: string): void {
-    this.container.classList.remove('commentary-overlay--hidden');
-    this.container.classList.remove('commentary-overlay--fading');
-    this.textEl.textContent += char;
-  }
-
-  startStream(): void {
-    this.clear();
-    this.container.classList.remove('commentary-overlay--hidden');
-    this.container.classList.remove('commentary-overlay--fading');
-    this.textEl.textContent = '';
-  }
-
-  endStream(durationMs = 5000): void {
-    if (this.fadeTimeout) clearTimeout(this.fadeTimeout);
-    this.fadeTimeout = setTimeout(() => {
-      this.container.classList.add('commentary-overlay--fading');
-      setTimeout(() => {
-        this.container.classList.add('commentary-overlay--hidden');
-      }, 1000);
-    }, durationMs);
-  }
-
   clear(): void {
     if (this.fadeTimeout) {
       clearTimeout(this.fadeTimeout);

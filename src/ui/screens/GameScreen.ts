@@ -1,4 +1,4 @@
-import { CANVAS } from '../../config/constants.ts';
+import { ASSETS, CANVAS } from '../../config/constants.ts';
 import { Scoreboard } from '../components/Scoreboard.ts';
 import { CommentaryOverlay } from '../components/CommentaryOverlay.ts';
 
@@ -15,6 +15,13 @@ export class GameScreen {
     // Stadium background
     const stadium = document.createElement('div');
     stadium.className = 'game-screen__stadium';
+    stadium.style.backgroundImage = `
+      radial-gradient(ellipse at 20% 50%, rgba(231, 76, 60, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 50%, rgba(52, 152, 219, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 0%, rgba(255, 255, 0, 0.05) 0%, transparent 40%),
+      linear-gradient(180deg, #0a0a20 0%, #0d1a0d 40%, #0a1a0a 60%, #0a0a20 100%),
+      url('${ASSETS.STADIUM}')
+    `;
     this.container.appendChild(stadium);
 
     // Canvas
