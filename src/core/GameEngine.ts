@@ -14,6 +14,7 @@ import { UIManager } from '../ui/UIManager.ts';
 import { GameScreen } from '../ui/screens/GameScreen.ts';
 import { PlayerSide } from '../types/entities.ts';
 import { SelectedCharacter } from '../ui/screens/SplashScreen.ts';
+import { saveMatchResult } from '../ui/WinHistory.ts';
 
 export class GameEngine {
   private state: GameState = GameState.LOADING;
@@ -238,6 +239,12 @@ export class GameEngine {
       winner,
       winnerName,
       finalScore,
+    });
+
+    saveMatchResult({
+      winner: winner === 'left' ? 'cristiano' : 'messi',
+      score: finalScore,
+      date: new Date().toISOString(),
     });
 
     this.uiManager.showGameOver(winner, finalScore);

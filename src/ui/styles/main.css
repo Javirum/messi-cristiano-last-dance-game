@@ -58,11 +58,36 @@ body {
   padding: 15px 40px;
   margin-top: 30px;
   animation: pulse 2s infinite;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
+}
+
+/* Feature 9: Ball icon in Kick Off button */
+.btn--start__ball {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s ease;
+}
+
+.btn--start:hover .btn--start__ball {
+  transform: translateY(-6px) rotate(180deg);
+}
+
+.btn--start--kicked {
+  animation: kickOff 600ms ease forwards !important;
+  pointer-events: none;
+}
+
+@keyframes kickOff {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+  100% { transform: scale(1.5); opacity: 0; }
 }
 
 .btn--mode,
