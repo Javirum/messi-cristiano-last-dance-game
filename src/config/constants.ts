@@ -49,7 +49,7 @@ export const ASSETS = {
   MESSI: `${base}images/messi.png`,
   BALL: `${base}images/ball.png`,
   FIELD: `${base}images/field.png`,
-  STADIUM: `${base}images/stadium.png`,
+  STADIUM: `${base}images/stadium-aerial.png`,
 } as const;
 
 export const AI_REACTION_DELAY = {

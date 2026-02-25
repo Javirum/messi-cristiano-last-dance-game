@@ -21,6 +21,7 @@ export class SplashScreen {
   private selectedCharacter: SelectedCharacter = 'cristiano';
   private soundManager: SoundManager | null = null;
   private ambientSource: AudioBufferSourceNode | null = null;
+  private bgMusic: HTMLAudioElement | null = null;
   private audioInitialized = false;
   private keydownHandler: ((e: KeyboardEvent) => void) | null = null;
   private introTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -114,6 +115,7 @@ export class SplashScreen {
     this.wireButtons();
     this.wireKeyboard();
     this.wireSounds();
+    this.startBgMusic();
   }
 
   // --- Shared selection methods (used by both click handlers and keyboard) ---
@@ -286,6 +288,26 @@ export class SplashScreen {
     }
     // Start ambient crowd
     this.ambientSource = this.soundManager.playLoop('crowd-ambient', 0.08);
+
+  }
+
+  private startBgMusic(): void {
+    const base = import.meta.env.BASE_URL;
+    const music = new Audio(`${base}audio/championship-ascent.mp3`);
+    music.loop = true;
+    music.volume = 0.3;
+    this.bgMusic = music;
+
+    // Try to play immediately; if browser blocks autoplay, start on first interaction
+    music.play().catch(() => {
+      const resume = () => {
+        music.play().catch(() => {});
+        document.removeEventListener('click', resume);
+        document.removeEventListener('keydown', resume);
+      };
+      document.addEventListener('click', resume, { once: false });
+      document.addEventListener('keydown', resume, { once: false });
+    });
   }
 
   private playSound(key: string, volume: number): void {
@@ -336,6 +358,11 @@ export class SplashScreen {
         /* already stopped */
       }
       this.ambientSource = null;
+    }
+    if (this.bgMusic) {
+      this.bgMusic.pause();
+      this.bgMusic.src = '';
+      this.bgMusic = null;
     }
     this.container.remove();
   }
