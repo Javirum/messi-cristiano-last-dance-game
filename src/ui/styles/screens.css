@@ -1,9 +1,17 @@
-/* Splash Screen */
+/* ========================================
+   SCREENS — Splash, Instructions, Game Over
+   Championship broadcast aesthetic with
+   diagonal motifs, gold accents, and
+   cinematic drama.
+   ======================================== */
+
+/* ───────── SPLASH SCREEN ───────── */
+
 .splash-screen {
-  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: linear-gradient(170deg, #0a0a0f 0%, #0d0d1a 40%, #0f1020 100%);
 }
 
-/* Feature 3: Radial glow overlay (moved from __bg) */
+/* Radial glow overlay — warm gold ambience */
 .splash-screen::before {
   content: '';
   position: absolute;
@@ -11,12 +19,15 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(ellipse at center, rgba(255, 255, 0, 0.05) 0%, transparent 70%);
+  background:
+    radial-gradient(ellipse at 25% 40%, rgba(194, 42, 62, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 75% 40%, rgba(37, 99, 168, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 30%, rgba(212, 168, 67, 0.04) 0%, transparent 60%);
   z-index: 1;
   pointer-events: none;
 }
 
-/* Feature 3: Stadium atmosphere background */
+/* Stadium atmosphere background */
 .splash-screen__bg {
   position: absolute;
   top: 0;
@@ -26,10 +37,10 @@
   z-index: 0;
   background-size: cover;
   background-position: center;
-  filter: blur(3px) brightness(0.3);
+  filter: blur(4px) brightness(0.2) saturate(0.6);
 }
 
-/* Feature 2: Particle background (CSS-only) */
+/* Floating particles — subtle gold/white specks */
 .splash-screen__bg::before,
 .splash-screen__bg::after {
   content: '';
@@ -42,40 +53,40 @@
 
 .splash-screen__bg::before {
   background:
-    radial-gradient(2px 2px at 10% 15%, rgba(255, 255, 255, 0.4), transparent),
-    radial-gradient(2px 2px at 25% 35%, rgba(255, 255, 0, 0.3), transparent),
-    radial-gradient(2px 2px at 45% 10%, rgba(255, 255, 255, 0.3), transparent),
-    radial-gradient(2px 2px at 60% 45%, rgba(255, 255, 0, 0.2), transparent),
-    radial-gradient(2px 2px at 75% 25%, rgba(255, 255, 255, 0.4), transparent),
-    radial-gradient(2px 2px at 90% 55%, rgba(255, 255, 0, 0.3), transparent),
-    radial-gradient(2px 2px at 15% 65%, rgba(255, 255, 255, 0.2), transparent),
-    radial-gradient(2px 2px at 35% 80%, rgba(255, 255, 0, 0.35), transparent),
-    radial-gradient(2px 2px at 55% 70%, rgba(255, 255, 255, 0.3), transparent),
-    radial-gradient(2px 2px at 85% 85%, rgba(255, 255, 0, 0.25), transparent);
-  animation: particlesUp 12s linear infinite;
+    radial-gradient(1.5px 1.5px at 10% 15%, rgba(212, 168, 67, 0.35), transparent),
+    radial-gradient(1.5px 1.5px at 25% 35%, rgba(255, 255, 255, 0.2), transparent),
+    radial-gradient(1.5px 1.5px at 45% 10%, rgba(212, 168, 67, 0.25), transparent),
+    radial-gradient(1.5px 1.5px at 60% 45%, rgba(255, 255, 255, 0.15), transparent),
+    radial-gradient(1.5px 1.5px at 75% 25%, rgba(212, 168, 67, 0.3), transparent),
+    radial-gradient(1.5px 1.5px at 90% 55%, rgba(255, 255, 255, 0.2), transparent),
+    radial-gradient(1.5px 1.5px at 15% 65%, rgba(212, 168, 67, 0.2), transparent),
+    radial-gradient(1.5px 1.5px at 35% 80%, rgba(255, 255, 255, 0.25), transparent),
+    radial-gradient(1.5px 1.5px at 55% 70%, rgba(212, 168, 67, 0.2), transparent),
+    radial-gradient(1.5px 1.5px at 85% 85%, rgba(255, 255, 255, 0.15), transparent);
+  animation: particlesUp 14s linear infinite;
 }
 
 .splash-screen__bg::after {
   background:
-    radial-gradient(2px 2px at 5% 40%, rgba(255, 255, 255, 0.3), transparent),
-    radial-gradient(2px 2px at 20% 70%, rgba(255, 255, 0, 0.25), transparent),
-    radial-gradient(2px 2px at 40% 30%, rgba(255, 255, 255, 0.35), transparent),
-    radial-gradient(2px 2px at 55% 85%, rgba(255, 255, 0, 0.3), transparent),
-    radial-gradient(2px 2px at 70% 50%, rgba(255, 255, 255, 0.2), transparent),
-    radial-gradient(2px 2px at 85% 20%, rgba(255, 255, 0, 0.4), transparent),
-    radial-gradient(2px 2px at 30% 15%, rgba(255, 255, 255, 0.25), transparent),
-    radial-gradient(2px 2px at 65% 60%, rgba(255, 255, 0, 0.3), transparent),
-    radial-gradient(2px 2px at 80% 75%, rgba(255, 255, 255, 0.35), transparent),
-    radial-gradient(2px 2px at 95% 45%, rgba(255, 255, 0, 0.2), transparent);
-  animation: particlesUp 18s linear infinite;
+    radial-gradient(1.5px 1.5px at 5% 40%, rgba(255, 255, 255, 0.2), transparent),
+    radial-gradient(1.5px 1.5px at 20% 70%, rgba(212, 168, 67, 0.2), transparent),
+    radial-gradient(1.5px 1.5px at 40% 30%, rgba(255, 255, 255, 0.25), transparent),
+    radial-gradient(1.5px 1.5px at 55% 85%, rgba(212, 168, 67, 0.2), transparent),
+    radial-gradient(1.5px 1.5px at 70% 50%, rgba(255, 255, 255, 0.15), transparent),
+    radial-gradient(1.5px 1.5px at 85% 20%, rgba(212, 168, 67, 0.3), transparent),
+    radial-gradient(1.5px 1.5px at 30% 15%, rgba(255, 255, 255, 0.2), transparent),
+    radial-gradient(1.5px 1.5px at 65% 60%, rgba(212, 168, 67, 0.2), transparent),
+    radial-gradient(1.5px 1.5px at 80% 75%, rgba(255, 255, 255, 0.25), transparent),
+    radial-gradient(1.5px 1.5px at 95% 45%, rgba(212, 168, 67, 0.15), transparent);
+  animation: particlesUp 20s linear infinite;
 }
 
 @keyframes particlesUp {
-  0% { transform: translateY(0); }
+  0%   { transform: translateY(0); }
   100% { transform: translateY(-50%); }
 }
 
-/* Feature 4: Cinematic intro overlay */
+/* ── Cinematic intro overlay ── */
 .splash-screen__intro {
   position: absolute;
   top: 0;
@@ -86,16 +97,20 @@
   align-items: center;
   justify-content: center;
   z-index: 10;
-  background: rgba(0, 0, 0, 0.85);
-  animation: introFadeOut 0.5s ease 3s forwards;
+  background: rgba(0, 0, 0, 0.92);
+  animation: introFadeOut 0.6s ease 3s forwards;
   pointer-events: none;
 }
 
 .splash-screen__intro-text {
-  font-size: 2em;
-  color: #ffff00;
-  text-shadow: 0 0 20px rgba(255, 255, 0, 0.5);
-  border-right: 3px solid #ffff00;
+  font-family: var(--font-display);
+  font-size: 4rem;
+  color: var(--clr-gold);
+  letter-spacing: 12px;
+  text-shadow:
+    0 0 40px rgba(212, 168, 67, 0.4),
+    0 0 80px rgba(212, 168, 67, 0.15);
+  border-right: 3px solid var(--clr-gold);
   overflow: hidden;
   white-space: nowrap;
   width: 0;
@@ -103,7 +118,7 @@
 }
 
 @keyframes typewriter {
-  to { width: 14ch; }
+  to { width: calc(14ch + 168px); }
 }
 
 @keyframes blinkCursor {
@@ -114,7 +129,7 @@
   to { opacity: 0; }
 }
 
-/* Content visibility for intro */
+/* ── Main content area ── */
 .splash-screen__content--hidden {
   opacity: 0;
   pointer-events: none;
@@ -126,90 +141,125 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
-  transition: opacity 0.5s ease;
+  gap: 14px;
+  transition: opacity 0.6s ease;
 }
 
-/* Feature 1: Animated player portraits */
+/* ── Player portraits & VS badge ── */
 .splash-screen__versus {
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-bottom: 10px;
+  gap: 28px;
+  margin-bottom: 8px;
 }
 
 .splash-screen__portrait {
-  width: 100px;
-  height: 140px;
-  border-radius: 8px;
+  width: 110px;
+  height: 148px;
+  border-radius: var(--radius-md);
   overflow: hidden;
-  border: 3px solid;
+  border: 2px solid;
+  position: relative;
+  transition: transform 300ms ease;
 }
 
 .splash-screen__portrait img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: contrast(1.05) saturate(1.1);
 }
 
+/* CR7 portrait — crimson glow */
 .splash-screen__portrait--left {
-  border-color: #c41e3a;
-  box-shadow: 0 0 20px rgba(196, 30, 58, 0.5);
-  animation: portraitFloat 3s ease-in-out infinite;
+  border-color: var(--clr-cr7);
+  box-shadow:
+    0 0 24px var(--clr-cr7-glow),
+    inset 0 0 20px rgba(194, 42, 62, 0.1);
+  animation: portraitFloat 4s ease-in-out infinite;
 }
 
+/* Messi portrait — royal blue glow */
 .splash-screen__portrait--right {
-  border-color: #004d98;
-  box-shadow: 0 0 20px rgba(0, 77, 152, 0.5);
-  animation: portraitFloat 3s ease-in-out infinite 1.5s;
+  border-color: var(--clr-messi);
+  box-shadow:
+    0 0 24px var(--clr-messi-glow),
+    inset 0 0 20px rgba(37, 99, 168, 0.1);
+  animation: portraitFloat 4s ease-in-out infinite 2s;
 }
 
 @keyframes portraitFloat {
   0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-8px) scale(1.03); }
+  50%      { transform: translateY(-6px) scale(1.02); }
 }
 
+/* Diagonal accent line beneath each portrait */
+.splash-screen__portrait::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent 0%, currentColor 50%, transparent 100%);
+}
+
+.splash-screen__portrait--left::after {
+  color: var(--clr-cr7);
+}
+
+.splash-screen__portrait--right::after {
+  color: var(--clr-messi);
+}
+
+/* VS badge */
 .splash-screen__vs-badge {
-  font-size: 1.5em;
-  color: #ffff00;
-  text-shadow: 2px 2px 0 #ff6b35;
-  animation: vsPulse 2s ease-in-out infinite;
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  color: var(--clr-gold);
+  letter-spacing: 4px;
+  text-shadow:
+    0 0 20px rgba(212, 168, 67, 0.4),
+    2px 2px 0 rgba(0, 0, 0, 0.5);
+  animation: vsPulse 3s ease-in-out infinite;
 }
 
 @keyframes vsPulse {
   0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.8; }
+  50%      { transform: scale(1.15); opacity: 0.85; }
 }
 
+/* ── Title & subtitle ── */
 .splash-screen__title {
-  font-size: 2.2em;
-  color: #ffff00;
-  text-shadow: 3px 3px 0 #ff6b35, 6px 6px 0 rgba(0, 0, 0, 0.3);
+  font-family: var(--font-display);
+  font-size: 3.2rem;
+  color: var(--clr-text);
+  letter-spacing: 6px;
+  text-shadow:
+    0 2px 20px rgba(0, 0, 0, 0.5);
   margin: 0;
-  animation: titleFloat 3s ease-in-out infinite;
-}
-
-@keyframes titleFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+  line-height: 1;
 }
 
 .splash-screen__subtitle {
-  font-size: 0.9em;
-  color: #ff6b35;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: var(--clr-gold);
   margin: 0;
-  letter-spacing: 3px;
+  letter-spacing: 8px;
+  text-transform: uppercase;
 }
 
+/* ── Mode, difficulty, character selectors ── */
 .splash-screen__mode-select {
   display: flex;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 8px;
+  margin-top: 16px;
 }
 
 .splash-screen__difficulty {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   transition: opacity 0.3s ease, max-height 0.3s ease;
 }
 
@@ -235,37 +285,54 @@
 }
 
 .splash-screen__character-label {
-  font-size: 0.7em;
-  color: #ccc;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--clr-text-muted);
+  letter-spacing: 0.5px;
 }
 
+/* Character-specific button accents */
 .btn--char-cristiano {
-  border-color: #c41e3a;
+  border-color: var(--clr-cr7);
+  color: var(--clr-cr7);
+}
+
+.btn--char-cristiano::before {
+  background: linear-gradient(120deg, transparent 0%, var(--clr-cr7) 100%);
 }
 
 .btn--char-cristiano.btn--active {
-  background: #c41e3a;
-  border-color: #c41e3a;
+  background: var(--clr-cr7);
+  border-color: var(--clr-cr7);
+  color: var(--clr-white);
+  box-shadow: 0 0 16px var(--clr-cr7-glow);
 }
 
 .btn--char-messi {
-  border-color: #004d98;
+  border-color: var(--clr-messi);
+  color: var(--clr-messi);
+}
+
+.btn--char-messi::before {
+  background: linear-gradient(120deg, transparent 0%, var(--clr-messi) 100%);
 }
 
 .btn--char-messi.btn--active {
-  background: #004d98;
-  border-color: #004d98;
+  background: var(--clr-messi);
+  border-color: var(--clr-messi);
+  color: var(--clr-white);
+  box-shadow: 0 0 16px var(--clr-messi-glow);
 }
 
-/* Feature 5: Stats ticker */
+/* ── Stats ticker ── */
 .splash-screen__ticker {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   overflow: hidden;
-  background: rgba(0, 0, 0, 0.7);
-  border-top: 1px solid #ffff00;
+  background: rgba(0, 0, 0, 0.75);
+  border-top: 1px solid var(--clr-border);
   z-index: 2;
   padding: 8px 0;
 }
@@ -273,29 +340,34 @@
 .splash-screen__ticker-track {
   display: flex;
   white-space: nowrap;
-  animation: tickerScroll 30s linear infinite;
+  animation: tickerScroll 35s linear infinite;
 }
 
 .splash-screen__ticker-track span {
-  font-size: 0.55em;
-  color: #ffff00;
-  padding: 0 20px;
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--clr-gold);
+  padding: 0 24px;
+  letter-spacing: 0.5px;
 }
 
 @keyframes tickerScroll {
-  0% { transform: translateX(0); }
+  0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 
-/* Feature 10: Win history */
+/* ── Win history ── */
 .splash-screen__history {
-  margin-top: 15px;
+  margin-top: 12px;
   text-align: center;
 }
 
 .splash-screen__history-tally {
-  font-size: 0.8em;
-  color: #ffff00;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--clr-gold);
+  letter-spacing: 3px;
   margin-bottom: 8px;
 }
 
@@ -307,23 +379,30 @@
 }
 
 .splash-screen__history-tag {
-  font-size: 0.5em;
-  padding: 3px 8px;
-  border-radius: 3px;
-  color: #fff;
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--clr-white);
+  letter-spacing: 0.3px;
 }
 
 .tag--cr7 {
-  background: rgba(196, 30, 58, 0.7);
+  background: rgba(194, 42, 62, 0.6);
+  border: 1px solid rgba(194, 42, 62, 0.3);
 }
 
 .tag--messi {
-  background: rgba(0, 77, 152, 0.7);
+  background: rgba(37, 99, 168, 0.6);
+  border: 1px solid rgba(37, 99, 168, 0.3);
 }
 
-/* Instructions Screen */
+
+/* ───────── INSTRUCTIONS SCREEN ───────── */
+
 .instructions-screen {
-  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+  background: linear-gradient(170deg, #0a0a0f 0%, #0d0d1a 100%);
 }
 
 .instructions-screen__content {
@@ -332,21 +411,55 @@
 }
 
 .instructions-screen__title {
-  font-size: 1.8em;
-  color: #ffff00;
-  margin-bottom: 30px;
+  font-family: var(--font-display);
+  font-size: 3rem;
+  color: var(--clr-text);
+  letter-spacing: 6px;
+  margin-bottom: 32px;
+  position: relative;
+}
+
+/* Gold underline accent */
+.instructions-screen__title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: var(--clr-gold);
+  border-radius: 2px;
 }
 
 .instructions-screen__columns {
   display: flex;
   gap: 60px;
-  margin-bottom: 30px;
+  margin-bottom: 32px;
+}
+
+.instructions-screen__player {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border-subtle);
+  border-radius: var(--radius-md);
+  padding: 24px 28px;
+  min-width: 200px;
 }
 
 .instructions-screen__player h2 {
-  font-size: 0.8em;
-  color: #ff6b35;
-  margin-bottom: 15px;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+/* Color-code each player heading */
+.instructions-screen__player:first-child h2 {
+  color: var(--clr-cr7);
+}
+
+.instructions-screen__player:last-child h2 {
+  color: var(--clr-messi);
 }
 
 .instructions-screen__player ul {
@@ -355,20 +468,38 @@
 }
 
 .instructions-screen__player li {
-  font-size: 0.65em;
+  font-size: 0.85rem;
   margin-bottom: 10px;
-  color: #ccc;
+  color: var(--clr-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .instructions-screen__note {
-  font-size: 0.55em;
-  color: #888;
-  margin-bottom: 20px;
+  font-size: 0.8rem;
+  color: var(--clr-text-muted);
+  margin-bottom: 24px;
+  line-height: 1.6;
 }
 
-/* Game Over Screen */
+
+/* ───────── GAME OVER SCREEN ───────── */
+
 .game-over-screen {
-  background: linear-gradient(180deg, #1a1a2e 0%, #0f3460 100%);
+  background: linear-gradient(170deg, #0a0a0f 0%, #0d1020 50%, #0a0a0f 100%);
+}
+
+/* Dramatic radial spotlight */
+.game-over-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at 50% 30%, rgba(212, 168, 67, 0.06) 0%, transparent 60%);
+  pointer-events: none;
 }
 
 .game-over-screen__content {
@@ -377,38 +508,60 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
+  gap: 16px;
+  animation: contentFadeIn 0.8s ease-out;
+}
+
+@keyframes contentFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .game-over-screen__title {
-  font-size: 2.5em;
-  color: #ffff00;
-  text-shadow: 3px 3px 0 #ff6b35;
+  font-family: var(--font-display);
+  font-size: 4rem;
+  color: var(--clr-gold);
+  letter-spacing: 8px;
+  text-shadow:
+    0 0 40px rgba(212, 168, 67, 0.3),
+    0 4px 8px rgba(0, 0, 0, 0.5);
   margin: 0;
-  animation: titleFloat 2s ease-in-out infinite;
+  animation: winnerGlow 2.5s ease-in-out infinite;
+}
+
+@keyframes winnerGlow {
+  0%, 100% { text-shadow: 0 0 40px rgba(212, 168, 67, 0.3), 0 4px 8px rgba(0, 0, 0, 0.5); }
+  50%      { text-shadow: 0 0 60px rgba(212, 168, 67, 0.5), 0 4px 8px rgba(0, 0, 0, 0.5); }
 }
 
 .game-over-screen__subtitle {
-  font-size: 0.8em;
-  color: #ccc;
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--clr-text-muted);
   margin: 0;
+  letter-spacing: 1px;
 }
 
 .game-over-screen__score {
-  font-size: 2em;
-  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: 4.5rem;
+  color: var(--clr-white);
   margin: 0;
+  letter-spacing: 12px;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.15);
 }
 
 .game-over-screen__image {
   max-width: 400px;
   max-height: 300px;
-  margin: 10px 0;
+  margin: 8px 0;
 }
 
 .game-over-screen__victory-img {
   max-width: 100%;
   max-height: 250px;
-  border-radius: 8px;
-  border: 2px solid #ffff00;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--clr-border);
+  box-shadow: var(--shadow-card);
 }

@@ -65,8 +65,8 @@ export class AIController {
       (player.side === 'left' && ball.velocity.x < 0);
 
     if (!movingToward) {
-      // Ball moving away — hold position near center
-      return CANVAS.HEIGHT / 2;
+      // Ball moving away — track ball Y to stay in attacking position
+      return ball.position.y;
     }
 
     // Time for ball to reach player's X
@@ -92,28 +92,42 @@ export class AIController {
 
   private getTargetX(player: Player, ball: Ball): number {
     const midfield = CANVAS.WIDTH / 2;
-    const isDefensiveSituation =
+    const ballOnOurSide =
       (player.side === 'right' && ball.position.x > midfield) ||
       (player.side === 'left' && ball.position.x < midfield);
 
-    if (this.difficulty === Difficulty.HARD && !isDefensiveSituation) {
-      // Aggressive: push past midfield
-      return player.side === 'right'
-        ? midfield + 80
-        : midfield - 80;
+    const ballMovingToward =
+      (player.side === 'right' && ball.velocity.x > 0) ||
+      (player.side === 'left' && ball.velocity.x < 0);
+
+    // When ball is on our side, intercept it
+    if (ballOnOurSide && ballMovingToward) {
+      return ball.position.x;
     }
 
-    // Defensive: stay near goal
-    if (isDefensiveSituation) {
-      return player.side === 'right'
-        ? CANVAS.WIDTH - 160
-        : 160;
+    // Ball is on opponent's side — chase it to attack/score
+    if (!ballOnOurSide) {
+      if (this.difficulty === Difficulty.HARD) {
+        // Hard: chase the ball all the way
+        return ball.position.x;
+      } else if (this.difficulty === Difficulty.MEDIUM) {
+        // Medium: push well past midfield toward the ball
+        const attackX = player.side === 'right'
+          ? Math.max(ball.position.x, midfield - 200)
+          : Math.min(ball.position.x, midfield + 200);
+        return attackX;
+      } else {
+        // Easy: push slightly past midfield
+        return player.side === 'right'
+          ? midfield - 80
+          : midfield + 80;
+      }
     }
 
-    // Default position
+    // Ball on our side but moving away — hold midfield area
     return player.side === 'right'
-      ? CANVAS.WIDTH * 0.75
-      : CANVAS.WIDTH * 0.25;
+      ? CANVAS.WIDTH * 0.6
+      : CANVAS.WIDTH * 0.4;
   }
 
   setDifficulty(difficulty: Difficulty): void {
