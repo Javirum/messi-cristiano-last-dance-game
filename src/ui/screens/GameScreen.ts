@@ -5,24 +5,20 @@ import { CommentaryOverlay } from '../components/CommentaryOverlay.ts';
 export class GameScreen {
   private container: HTMLElement;
   private canvas: HTMLCanvasElement;
+  private stadium: HTMLElement;
   readonly scoreboard: Scoreboard;
   readonly commentaryOverlay: CommentaryOverlay;
+  private resizeHandler: () => void;
 
   constructor() {
     this.container = document.createElement('div');
     this.container.className = 'screen game-screen';
 
     // Stadium background
-    const stadium = document.createElement('div');
-    stadium.className = 'game-screen__stadium';
-    stadium.style.backgroundImage = `
-      radial-gradient(ellipse at 20% 50%, rgba(231, 76, 60, 0.15) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 50%, rgba(52, 152, 219, 0.15) 0%, transparent 50%),
-      radial-gradient(ellipse at 50% 0%, rgba(255, 255, 0, 0.05) 0%, transparent 40%),
-      linear-gradient(180deg, #0a0a20 0%, #0d1a0d 40%, #0a1a0a 60%, #0a0a20 100%),
-      url('${ASSETS.STADIUM}')
-    `;
-    this.container.appendChild(stadium);
+    this.stadium = document.createElement('div');
+    this.stadium.className = 'game-screen__stadium';
+    this.stadium.style.backgroundImage = `url('${ASSETS.STADIUM}')`;
+    this.container.appendChild(this.stadium);
 
     // Canvas
     this.canvas = document.createElement('canvas');
@@ -38,6 +34,42 @@ export class GameScreen {
     // Commentary overlay
     this.commentaryOverlay = new CommentaryOverlay();
     this.container.appendChild(this.commentaryOverlay.getElement());
+
+    // Align stadium background after layout
+    this.resizeHandler = () => this.alignStadiumBackground();
+    requestAnimationFrame(() => this.alignStadiumBackground());
+    window.addEventListener('resize', this.resizeHandler);
+  }
+
+  /** Position the stadium background so the pitch aligns with the canvas */
+  private alignStadiumBackground(): void {
+    const containerRect = this.container.getBoundingClientRect();
+    const canvasRect = this.canvas.getBoundingClientRect();
+
+    // Canvas center relative to container
+    const canvasCenterX = canvasRect.left - containerRect.left + canvasRect.width / 2;
+    const canvasCenterY = canvasRect.top - containerRect.top + canvasRect.height / 2;
+
+    // Pitch boundaries in custom stadium-bg.png (1800 x 1080)
+    const IMG_W = 1800, IMG_H = 1080;
+    const PITCH_LEFT = 400, PITCH_TOP = 240;
+    const PITCH_W = 1000, PITCH_H = 600;
+
+    // Scale 1:1 — pitch in image matches canvas pixel-for-pixel
+    const scale = canvasRect.width / PITCH_W;
+    const imgW = IMG_W * scale;
+    const imgH = IMG_H * scale;
+
+    // Pitch center in the scaled image
+    const pitchCenterX = (PITCH_LEFT + PITCH_W / 2) * scale;
+    const pitchCenterY = (PITCH_TOP + PITCH_H / 2) * scale;
+
+    // Position background so pitch center = canvas center
+    const bgX = canvasCenterX - pitchCenterX;
+    const bgY = canvasCenterY - pitchCenterY;
+
+    this.stadium.style.backgroundSize = `${imgW}px ${imgH}px`;
+    this.stadium.style.backgroundPosition = `${bgX}px ${bgY}px`;
   }
 
   getElement(): HTMLElement {
@@ -55,6 +87,7 @@ export class GameScreen {
   }
 
   destroy(): void {
+    window.removeEventListener('resize', this.resizeHandler);
     this.commentaryOverlay.clear();
     this.container.remove();
   }
