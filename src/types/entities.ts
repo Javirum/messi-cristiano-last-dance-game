@@ -7,6 +7,7 @@ export interface PlayerInput {
   down: boolean;
   left: boolean;
   right: boolean;
+  kick: boolean;
 }
 
 export interface IEntity {

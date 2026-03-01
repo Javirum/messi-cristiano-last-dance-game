@@ -5,6 +5,7 @@ export interface KeyBindings {
   down: string;
   left: string;
   right: string;
+  kick: string;
 }
 
 export const P1_KEYS: KeyBindings = {
@@ -12,6 +13,7 @@ export const P1_KEYS: KeyBindings = {
   down: 's',
   left: 'a',
   right: 'd',
+  kick: ' ',
 };
 
 export const P2_KEYS: KeyBindings = {
@@ -19,6 +21,7 @@ export const P2_KEYS: KeyBindings = {
   down: 'k',
   left: 'j',
   right: 'l',
+  kick: 'enter',
 };
 
 export class InputManager {
@@ -56,6 +59,7 @@ export class InputManager {
       down: this.keysDown.has(bindings.down),
       left: this.keysDown.has(bindings.left),
       right: this.keysDown.has(bindings.right),
+      kick: this.keysDown.has(bindings.kick),
     };
   }
 

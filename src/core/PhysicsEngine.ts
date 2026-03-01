@@ -29,6 +29,9 @@ export class PhysicsEngine {
     // Ball-wall bouncing (top and bottom)
     this.checkBallWallBounce(ball);
 
+    // Player-player collision
+    this.checkPlayerPlayerCollision(player1, player2);
+
     // Player-ball collisions (circle-circle)
     this.checkPlayerBallCollision(player1, ball);
     this.checkPlayerBallCollision(player2, ball);
@@ -40,6 +43,40 @@ export class PhysicsEngine {
     this.checkNearMiss(ball, goalLeft, goalRight);
 
     return scored;
+  }
+
+  private checkPlayerPlayerCollision(p1: Player, p2: Player): void {
+    const dx = p2.position.x - p1.position.x;
+    const dy = p2.position.y - p1.position.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const minDist = p1.radius + p2.radius;
+
+    if (distance < minDist && distance > 0) {
+      const nx = dx / distance;
+      const ny = dy / distance;
+
+      // Check if players are moving toward each other
+      const relVx = p1.velocity.x - p2.velocity.x;
+      const relVy = p1.velocity.y - p2.velocity.y;
+      const relDot = relVx * nx + relVy * ny;
+      if (relDot <= 0) return;
+
+      // Push both players apart equally
+      const overlap = minDist - distance;
+      p1.position.x -= nx * (overlap / 2);
+      p1.position.y -= ny * (overlap / 2);
+      p2.position.x += nx * (overlap / 2);
+      p2.position.y += ny * (overlap / 2);
+
+      // Dampen velocity along collision normal
+      const p1dot = p1.velocity.x * nx + p1.velocity.y * ny;
+      const p2dot = p2.velocity.x * nx + p2.velocity.y * ny;
+
+      p1.velocity.x -= p1dot * nx * 0.5;
+      p1.velocity.y -= p1dot * ny * 0.5;
+      p2.velocity.x -= p2dot * nx * 0.5;
+      p2.velocity.y -= p2dot * ny * 0.5;
+    }
   }
 
   private checkBallWallBounce(ball: Ball): void {
@@ -75,7 +112,14 @@ export class PhysicsEngine {
       const playerSpeed = Math.sqrt(
         player.velocity.x ** 2 + player.velocity.y ** 2,
       );
-      const hitStrength = Math.max(playerSpeed * 1.5, 2);
+      let hitStrength = Math.max(playerSpeed * 1.5, 2);
+
+      // Apply power shot multiplier
+      const wasPowerShot = player.kickPower > 0;
+      if (wasPowerShot) {
+        hitStrength *= 1 + player.kickPower * 3; // up to 4x
+        player.kickPower = 0;
+      }
 
       ball.velocity.x = nx * hitStrength;
       ball.velocity.y = ny * hitStrength;
@@ -109,6 +153,7 @@ export class PhysicsEngine {
       this.eventBus.emit(GameEvent.COLLISION, {
         player: player.side,
         ballSpeed: speed,
+        isPowerShot: wasPowerShot,
       });
     }
   }

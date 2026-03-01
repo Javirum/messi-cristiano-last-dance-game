@@ -13,6 +13,9 @@ export class Player {
   readonly deceleration: number;
   score: number;
   input: PlayerInput;
+  chargeAmount: number;
+  isCharging: boolean;
+  kickPower: number;
 
   private readonly initialPosition: Vector2D;
   private readonly assetLoader: AssetLoader;
@@ -26,12 +29,15 @@ export class Player {
     this.acceleration = PLAYER.ACCELERATION;
     this.deceleration = PLAYER.DECELERATION;
     this.score = 0;
+    this.chargeAmount = 0;
+    this.isCharging = false;
+    this.kickPower = 0;
 
     const start = side === 'left' ? PLAYER.START_P1 : PLAYER.START_P2;
     this.position = { x: start.x, y: start.y };
     this.initialPosition = { x: start.x, y: start.y };
     this.velocity = { x: 0, y: 0 };
-    this.input = { up: false, down: false, left: false, right: false };
+    this.input = { up: false, down: false, left: false, right: false, kick: false };
     this.imageKey = side === 'left' ? 'cristiano' : 'messi';
   }
 
@@ -86,6 +92,20 @@ export class Player {
       if (this.velocity.y < 0) this.velocity.y = 0;
     }
 
+    // Power shot charge logic
+    if (this.input.kick) {
+      this.isCharging = true;
+      this.chargeAmount = Math.min(1, this.chargeAmount + 0.014);
+      // Reduce speed while charging (commitment cost)
+      this.velocity.x *= 0.6;
+      this.velocity.y *= 0.6;
+    } else if (this.isCharging) {
+      // Released kick — transfer charge to kick power
+      this.kickPower = this.chargeAmount;
+      this.chargeAmount = 0;
+      this.isCharging = false;
+    }
+
     // Apply velocity to position
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
@@ -111,7 +131,10 @@ export class Player {
     this.position.y = this.initialPosition.y;
     this.velocity.x = 0;
     this.velocity.y = 0;
-    this.input = { up: false, down: false, left: false, right: false };
+    this.input = { up: false, down: false, left: false, right: false, kick: false };
+    this.chargeAmount = 0;
+    this.isCharging = false;
+    this.kickPower = 0;
   }
 
   clampToBounds(canvasWidth: number, canvasHeight: number): void {

@@ -13,6 +13,7 @@ export function aggressiveStrategy(
     down: false,
     left: false,
     right: false,
+    kick: false,
   };
 
   const midfield = CANVAS.WIDTH / 2;

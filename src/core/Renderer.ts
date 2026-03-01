@@ -2,9 +2,13 @@ import { CANVAS, GAME } from '../config/constants.ts';
 import { Player } from '../entities/Player.ts';
 import { Ball } from '../entities/Ball.ts';
 import { Goal } from '../entities/Goal.ts';
+import { ParticleSystem } from './ParticleSystem.ts';
 
 export class Renderer {
   private ctx: CanvasRenderingContext2D;
+  private flashAlpha = 0;
+  private flashStartTime = 0;
+  private readonly FLASH_DURATION = 500;
 
   constructor(ctx: CanvasRenderingContext2D) {
     this.ctx = ctx;
@@ -105,6 +109,53 @@ export class Renderer {
     this.ctx.font = '600 28px "Rajdhani"';
     this.ctx.fillStyle = '#f0ece4';
     this.ctx.fillText(scorerName, CANVAS.WIDTH / 2, CANVAS.HEIGHT / 2 + 30);
+    this.ctx.restore();
+  }
+
+  triggerScreenFlash(): void {
+    this.flashAlpha = 0.4;
+    this.flashStartTime = performance.now();
+  }
+
+  drawScreenFlash(): void {
+    if (this.flashAlpha <= 0) return;
+    const elapsed = performance.now() - this.flashStartTime;
+    this.flashAlpha = Math.max(0, 0.4 * (1 - elapsed / this.FLASH_DURATION));
+    if (this.flashAlpha > 0) {
+      this.ctx.save();
+      this.ctx.globalAlpha = this.flashAlpha;
+      this.ctx.fillStyle = '#ffffff';
+      this.ctx.fillRect(0, 0, CANVAS.WIDTH, CANVAS.HEIGHT);
+      this.ctx.restore();
+    }
+  }
+
+  drawParticles(particles: ParticleSystem): void {
+    particles.draw(this.ctx);
+  }
+
+  drawChargeIndicator(player: Player): void {
+    if (player.chargeAmount <= 0) return;
+    const charge = player.chargeAmount;
+    const cx = player.position.x;
+    const cy = player.position.y;
+    const r = player.radius + 8;
+
+    this.ctx.save();
+    const startAngle = -Math.PI / 2;
+    const endAngle = startAngle + charge * Math.PI * 2;
+
+    // Color gradient from gold to red
+    const red = Math.floor(212 + (255 - 212) * charge);
+    const green = Math.floor(168 * (1 - charge));
+    const blue = Math.floor(67 * (1 - charge));
+
+    this.ctx.strokeStyle = `rgb(${red}, ${green}, ${blue})`;
+    this.ctx.lineWidth = 4;
+    this.ctx.lineCap = 'round';
+    this.ctx.beginPath();
+    this.ctx.arc(cx, cy, r, startAngle, endAngle);
+    this.ctx.stroke();
     this.ctx.restore();
   }
 }

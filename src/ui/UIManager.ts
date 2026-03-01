@@ -5,6 +5,7 @@ import { InstructionsScreen } from './screens/InstructionsScreen.ts';
 import { GameScreen } from './screens/GameScreen.ts';
 import { GameOverScreen } from './screens/GameOverScreen.ts';
 import { HamburgerMenu } from './components/HamburgerMenu.ts';
+import { MatchStatsData } from '../core/MatchStats.ts';
 
 export interface UICallbacks {
   onStartGame: (mode: GameMode, difficulty: Difficulty, character: SelectedCharacter) => void;
@@ -58,11 +59,12 @@ export class UIManager {
   showGameOver(
     winner: PlayerSide,
     finalScore: { left: number; right: number },
+    stats?: MatchStatsData,
   ): GameOverScreen {
     this.clearScreen();
     const gameOver = new GameOverScreen(winner, finalScore, {
       onRestart: () => this.callbacks.onRestart(),
-    });
+    }, stats);
     this.currentScreen = gameOver;
     this.app.appendChild(gameOver.getElement());
     return gameOver;

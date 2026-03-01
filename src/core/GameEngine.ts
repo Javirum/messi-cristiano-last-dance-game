@@ -15,6 +15,9 @@ import { GameScreen } from '../ui/screens/GameScreen.ts';
 import { PlayerSide } from '../types/entities.ts';
 import { SelectedCharacter } from '../ui/screens/SplashScreen.ts';
 import { saveMatchResult } from '../ui/WinHistory.ts';
+import { ParticleSystem } from './ParticleSystem.ts';
+import { MatchStats } from './MatchStats.ts';
+import { TutorialOverlay } from '../ui/components/TutorialOverlay.ts';
 
 export class GameEngine {
   private state: GameState = GameState.LOADING;
@@ -35,6 +38,8 @@ export class GameEngine {
   private goalRight: Goal | null = null;
 
   private aiController: AIController | null = null;
+  private matchStats: MatchStats | null = null;
+  private particleSystem: ParticleSystem = new ParticleSystem();
   private animFrameId: number | null = null;
   private lastTimestamp = 0;
   private goalCelebrationTimer: ReturnType<typeof setTimeout> | null = null;
@@ -85,6 +90,9 @@ export class GameEngine {
     // Cristiano is always left, Messi is always right
     this.humanSide = (mode === GameMode.PVE && character === 'messi') ? 'right' : 'left';
 
+    // Match stats tracker
+    this.matchStats = new MatchStats(this.eventBus);
+
     // AI controller for PvE mode
     if (mode === GameMode.PVE) {
       this.aiController = new AIController(difficulty);
@@ -98,6 +106,26 @@ export class GameEngine {
 
     this.setState(GameState.PLAYING);
     this.eventBus.emit(GameEvent.GAME_STARTED, { mode });
+
+    // Show tutorial for first-time players
+    if (TutorialOverlay.shouldShow()) {
+      this.isPaused = true;
+      this.setState(GameState.PAUSED);
+      const tutorial = new TutorialOverlay(() => {
+        this.isPaused = false;
+        this.setState(GameState.PLAYING);
+        this.lastTimestamp = performance.now();
+        this.animFrameId = requestAnimationFrame((ts) => this.gameLoop(ts));
+      });
+      this.gameScreen!.getElement().appendChild(tutorial.getElement());
+
+      // Render the initial frame so the field is visible behind the tutorial
+      this.renderer!.drawAll(
+        this.player1!, this.player2!, this.ball!,
+        this.goalLeft!, this.goalRight!,
+      );
+      return;
+    }
 
     // Start game loop
     this.lastTimestamp = performance.now();
@@ -136,7 +164,7 @@ export class GameEngine {
       const humanPlayer = this.humanSide === 'left' ? p1 : p2;
       const aiPlayer = this.humanSide === 'left' ? p2 : p1;
       humanPlayer.input = this.inputManager.getPlayerInput(P1_KEYS);
-      aiPlayer.input = this.aiController.update(aiPlayer, ball, timestamp);
+      aiPlayer.input = this.aiController.update(aiPlayer, ball, timestamp, humanPlayer);
     } else {
       p1.input = this.inputManager.getPlayerInput(P1_KEYS);
       p2.input = this.inputManager.getPlayerInput(P2_KEYS);
@@ -158,6 +186,8 @@ export class GameEngine {
 
     // Render
     this.renderer!.drawAll(p1, p2, ball, this.goalLeft!, this.goalRight!);
+    this.renderer!.drawChargeIndicator(p1);
+    this.renderer!.drawChargeIndicator(p2);
 
     // Update scoreboard
     this.gameScreen!.scoreboard.updateScore(p1.score, p2.score);
@@ -203,12 +233,30 @@ export class GameEngine {
       return;
     }
 
-    // Celebration pause
+    // Celebration pause with particles + flash
     this.setState(GameState.GOAL_SCORED);
-    this.renderer!.drawGoalCelebration(scorerName);
+
+    // Spawn confetti at the scoring goal position
+    const goalX = scorer === 'left' ? CANVAS.WIDTH - 20 : 20;
+    const goalY = CANVAS.HEIGHT / 2;
+    this.particleSystem.spawn(goalX, goalY, 40);
+    this.renderer!.triggerScreenFlash();
+
+    // Start celebration render loop
+    const celebrationLoop = () => {
+      if (this.state !== GameState.GOAL_SCORED) return;
+      this.particleSystem.update();
+      this.renderer!.drawAll(p1, p2, this.ball!, this.goalLeft!, this.goalRight!);
+      this.renderer!.drawGoalCelebration(scorerName);
+      this.renderer!.drawParticles(this.particleSystem);
+      this.renderer!.drawScreenFlash();
+      requestAnimationFrame(celebrationLoop);
+    };
+    requestAnimationFrame(celebrationLoop);
 
     this.goalCelebrationTimer = setTimeout(() => {
       // Reset positions
+      this.particleSystem.clear();
       p1.reset();
       p2.reset();
       this.ball!.reset(CANVAS.WIDTH, CANVAS.HEIGHT);
@@ -247,7 +295,8 @@ export class GameEngine {
       date: new Date().toISOString(),
     });
 
-    this.uiManager.showGameOver(winner, finalScore);
+    const stats = this.matchStats?.getData();
+    this.uiManager.showGameOver(winner, finalScore, stats);
   }
 
   private restart(): void {
@@ -307,6 +356,10 @@ export class GameEngine {
     this.goalLeft = null;
     this.goalRight = null;
     this.aiController = null;
+    if (this.matchStats) {
+      this.matchStats.destroy();
+      this.matchStats = null;
+    }
     this.renderer = null;
     this.gameScreen = null;
     this.isPaused = false;

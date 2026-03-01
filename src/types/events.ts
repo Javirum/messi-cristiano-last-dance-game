@@ -35,6 +35,7 @@ export interface NearMissPayload {
 export interface CollisionPayload {
   player: PlayerSide;
   ballSpeed: number;
+  isPowerShot: boolean;
 }
 
 export interface RallyLongPayload {

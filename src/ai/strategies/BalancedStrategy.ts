@@ -14,6 +14,7 @@ export function balancedStrategy(
     down: false,
     left: false,
     right: false,
+    kick: false,
   };
 
   const midfield = CANVAS.WIDTH / 2;

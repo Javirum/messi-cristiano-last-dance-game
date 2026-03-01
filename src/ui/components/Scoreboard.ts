@@ -4,6 +4,8 @@ export class Scoreboard {
   private rightScoreEl: HTMLElement;
   private leftNameEl: HTMLElement;
   private rightNameEl: HTMLElement;
+  private lastLeft = 0;
+  private lastRight = 0;
 
   constructor() {
     this.container = document.createElement('div');
@@ -43,7 +45,25 @@ export class Scoreboard {
   }
 
   updateScore(left: number, right: number): void {
+    if (left !== this.lastLeft) {
+      this.triggerPop(this.leftScoreEl);
+      this.lastLeft = left;
+    }
+    if (right !== this.lastRight) {
+      this.triggerPop(this.rightScoreEl);
+      this.lastRight = right;
+    }
     this.leftScoreEl.textContent = String(left);
     this.rightScoreEl.textContent = String(right);
+  }
+
+  private triggerPop(el: HTMLElement): void {
+    el.classList.remove('scoreboard__score--pop');
+    // Force reflow to re-trigger animation
+    void el.offsetWidth;
+    el.classList.add('scoreboard__score--pop');
+    el.addEventListener('animationend', () => {
+      el.classList.remove('scoreboard__score--pop');
+    }, { once: true });
   }
 }

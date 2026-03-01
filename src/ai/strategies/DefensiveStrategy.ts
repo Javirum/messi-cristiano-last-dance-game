@@ -13,6 +13,7 @@ export function defensiveStrategy(
     down: false,
     left: false,
     right: false,
+    kick: false,
   };
 
   // Stay near goal, high blocking priority

@@ -63,6 +63,8 @@ export class FanSoundManager {
 
   private onGoalScored(payload: GoalScoredPayload): void {
     if (!this.loaded) return;
+    // Goal horn blast
+    this.soundManager.play('goal-horn', 0.7);
     // Random roar variation
     const roarIndex = Math.floor(Math.random() * 3) + 1;
     this.soundManager.play(`crowd-roar-${roarIndex}`, 0.8);

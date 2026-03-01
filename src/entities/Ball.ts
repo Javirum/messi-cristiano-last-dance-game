@@ -9,6 +9,7 @@ export class Ball {
   readonly deceleration: number;
   readonly maxSpeed: number;
   spin: number;
+  rotationAngle: number;
 
   private readonly assetLoader: AssetLoader;
 
@@ -18,6 +19,7 @@ export class Ball {
     this.deceleration = BALL.DECELERATION;
     this.maxSpeed = BALL.MAX_SPEED;
     this.spin = 0;
+    this.rotationAngle = 0;
 
     this.position = {
       x: CANVAS.WIDTH / 2,
@@ -64,6 +66,9 @@ export class Ball {
       this.velocity.y *= scale;
     }
 
+    // Update rotation based on speed and spin
+    this.rotationAngle += (speed * 0.08) + (this.spin * 0.15);
+
     // Apply velocity
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
@@ -71,13 +76,17 @@ export class Ball {
 
   draw(ctx: CanvasRenderingContext2D): void {
     const img = this.assetLoader.get('ball');
+    ctx.save();
+    ctx.translate(this.position.x, this.position.y);
+    ctx.rotate(this.rotationAngle);
     ctx.drawImage(
       img,
-      this.position.x - BALL.IMAGE_SIZE / 2,
-      this.position.y - BALL.IMAGE_SIZE / 2,
+      -BALL.IMAGE_SIZE / 2,
+      -BALL.IMAGE_SIZE / 2,
       BALL.IMAGE_SIZE,
       BALL.IMAGE_SIZE,
     );
+    ctx.restore();
   }
 
   reset(canvasWidth: number, canvasHeight: number): void {
@@ -86,5 +95,6 @@ export class Ball {
     this.velocity.x = 0;
     this.velocity.y = 0;
     this.spin = 0;
+    this.rotationAngle = 0;
   }
 }

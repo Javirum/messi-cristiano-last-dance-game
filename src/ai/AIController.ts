@@ -3,6 +3,10 @@ import { PlayerInput } from '../types/entities.ts';
 import { Player } from '../entities/Player.ts';
 import { Ball } from '../entities/Ball.ts';
 import { CANVAS, AI_REACTION_DELAY } from '../config/constants.ts';
+import { aggressiveStrategy } from './strategies/AggressiveStrategy.ts';
+import { defensiveStrategy } from './strategies/DefensiveStrategy.ts';
+
+type Strategy = 'balanced' | 'aggressive' | 'defensive';
 
 export class AIController {
   private difficulty: Difficulty;
@@ -13,25 +17,92 @@ export class AIController {
     down: false,
     left: false,
     right: false,
+    kick: false,
   };
   private deadZone = 16;
+  private kickChargeStart = 0;
+  private kickChargeDuration = 0;
+  private isChargingKick = false;
+  private currentStrategy: Strategy = 'balanced';
+  private lastStrategyCheck = 0;
 
   constructor(difficulty: Difficulty) {
     this.difficulty = difficulty;
     this.reactionDelay = AI_REACTION_DELAY[difficulty];
   }
 
-  update(player: Player, ball: Ball, now: number): PlayerInput {
+  update(player: Player, ball: Ball, now: number, opponent?: Player): PlayerInput {
+    // Evaluate strategy every 500ms
+    if (opponent && now - this.lastStrategyCheck > 500) {
+      this.lastStrategyCheck = now;
+      this.currentStrategy = this.selectStrategy(player, opponent);
+    }
+
     if (now - this.lastDecisionTime < this.reactionDelay) {
       return this.currentInput;
     }
     this.lastDecisionTime = now;
 
+    let input: PlayerInput;
+
+    // Delegate to strategy
+    if (this.currentStrategy === 'aggressive') {
+      input = aggressiveStrategy(player, ball, this.deadZone);
+    } else if (this.currentStrategy === 'defensive') {
+      input = defensiveStrategy(player, ball, this.deadZone);
+    } else {
+      // Balanced: use the built-in prediction-based logic
+      input = this.balancedUpdate(player, ball);
+    }
+
+    // Kick logic: charge when near ball and ball is on opponent's side
+    const distToBall = Math.sqrt(
+      (player.position.x - ball.position.x) ** 2 +
+      (player.position.y - ball.position.y) ** 2,
+    );
+    const midfield = CANVAS.WIDTH / 2;
+    const ballOnOpponentSide =
+      (player.side === 'right' && ball.position.x < midfield) ||
+      (player.side === 'left' && ball.position.x > midfield);
+
+    if (this.isChargingKick) {
+      input.kick = true;
+      if (now - this.kickChargeStart >= this.kickChargeDuration) {
+        input.kick = false;
+        this.isChargingKick = false;
+      }
+    } else if (distToBall < 80 && ballOnOpponentSide) {
+      const minCharge = this.difficulty === Difficulty.HARD ? 400 : 300;
+      const maxCharge = this.difficulty === Difficulty.HARD ? 900 : 800;
+      this.kickChargeDuration = minCharge + Math.random() * (maxCharge - minCharge);
+      this.kickChargeStart = now;
+      this.isChargingKick = true;
+      input.kick = true;
+    }
+
+    this.currentInput = input;
+    return input;
+  }
+
+  private selectStrategy(player: Player, opponent: Player): Strategy {
+    const scoreDiff = player.score - opponent.score;
+    const aggressiveThreshold = this.difficulty === Difficulty.HARD ? -1 : -2;
+
+    if (scoreDiff <= aggressiveThreshold) {
+      return 'aggressive';
+    } else if (scoreDiff >= 2) {
+      return 'defensive';
+    }
+    return 'balanced';
+  }
+
+  private balancedUpdate(player: Player, ball: Ball): PlayerInput {
     const input: PlayerInput = {
       up: false,
       down: false,
       left: false,
       right: false,
+      kick: false,
     };
 
     // Predict where ball will be when it reaches player's X
@@ -52,35 +123,29 @@ export class AIController {
       else input.right = true;
     }
 
-    this.currentInput = input;
     return input;
   }
 
   private predictBallY(player: Player, ball: Ball): number {
     if (ball.velocity.x === 0) return ball.position.y;
 
-    // Only predict when ball is moving toward us
     const movingToward =
       (player.side === 'right' && ball.velocity.x > 0) ||
       (player.side === 'left' && ball.velocity.x < 0);
 
     if (!movingToward) {
-      // Ball moving away — track ball Y to stay in attacking position
       return ball.position.y;
     }
 
-    // Time for ball to reach player's X
     const distX = Math.abs(player.position.x - ball.position.x);
     const timeToReach = distX / Math.abs(ball.velocity.x);
     let predictedY = ball.position.y + ball.velocity.y * timeToReach;
 
-    // Clamp prediction within canvas
     predictedY = Math.max(
       player.radius,
       Math.min(CANVAS.HEIGHT - player.radius, predictedY),
     );
 
-    // Add imprecision for easier difficulties
     if (this.difficulty === Difficulty.EASY) {
       predictedY += (Math.random() - 0.5) * 120;
     } else if (this.difficulty === Difficulty.MEDIUM) {
@@ -100,31 +165,25 @@ export class AIController {
       (player.side === 'right' && ball.velocity.x > 0) ||
       (player.side === 'left' && ball.velocity.x < 0);
 
-    // When ball is on our side, intercept it
     if (ballOnOurSide && ballMovingToward) {
       return ball.position.x;
     }
 
-    // Ball is on opponent's side — chase it to attack/score
     if (!ballOnOurSide) {
       if (this.difficulty === Difficulty.HARD) {
-        // Hard: chase the ball all the way
         return ball.position.x;
       } else if (this.difficulty === Difficulty.MEDIUM) {
-        // Medium: push well past midfield toward the ball
         const attackX = player.side === 'right'
           ? Math.max(ball.position.x, midfield - 200)
           : Math.min(ball.position.x, midfield + 200);
         return attackX;
       } else {
-        // Easy: push slightly past midfield
         return player.side === 'right'
           ? midfield - 80
           : midfield + 80;
       }
     }
 
-    // Ball on our side but moving away — hold midfield area
     return player.side === 'right'
       ? CANVAS.WIDTH * 0.6
       : CANVAS.WIDTH * 0.4;

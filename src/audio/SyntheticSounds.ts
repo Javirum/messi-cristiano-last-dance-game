@@ -226,6 +226,37 @@ function uiClick(ctx: OfflineAudioContext): void {
   osc2.stop(0.12);
 }
 
+function goalHorn(ctx: OfflineAudioContext): void {
+  const osc = ctx.createOscillator();
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(200, 0);
+  osc.frequency.linearRampToValueAtTime(150, 0.8);
+
+  const osc2 = ctx.createOscillator();
+  osc2.type = 'square';
+  osc2.frequency.setValueAtTime(200, 0);
+  osc2.frequency.linearRampToValueAtTime(150, 0.8);
+
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0, 0);
+  gain.gain.linearRampToValueAtTime(0.6, 0.05);
+  gain.gain.setValueAtTime(0.6, 0.5);
+  gain.gain.linearRampToValueAtTime(0, 0.8);
+
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = 600;
+
+  osc.connect(gain);
+  osc2.connect(gain);
+  gain.connect(filter);
+  filter.connect(ctx.destination);
+  osc.start(0);
+  osc2.start(0);
+  osc.stop(0.8);
+  osc2.stop(0.8);
+}
+
 function crowdBoo(ctx: OfflineAudioContext): void {
   const duration = 2.0;
   const noise = createNoiseBuffer(ctx, duration);
@@ -265,6 +296,7 @@ export async function generateSounds(
     ['crowd-chant-messi', 1.0, (ctx) => crowdChant(ctx, 2)],
     ['crowd-chant-cristiano', 1.6, (ctx) => crowdChant(ctx, 3)],
     ['crowd-boo', 2.0, crowdBoo],
+    ['goal-horn', 0.8, goalHorn],
     ['ui-hover', 0.08, uiHover],
     ['ui-click', 0.15, uiClick],
   ];
