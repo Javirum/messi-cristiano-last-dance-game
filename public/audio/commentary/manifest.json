@@ -1,0 +1,86 @@
+{
+  "game-start": [
+    {
+      "file": "game-start-1.mp3",
+      "text": "Ladies and gentlemen, welcome to the match of the century! Messi versus Cristiano — The Last Dance! The referee blows the whistle, and we are underway!"
+    },
+    {
+      "file": "game-start-2.mp3",
+      "text": "This is it! The moment the whole world has been waiting for! Messi and Ronaldo, face to face, one last time. The whistle goes — let the battle begin!"
+    },
+    {
+      "file": "game-start-3.mp3",
+      "text": "The stadium is electric! Two legends, one final showdown! Messi versus Cristiano — The Last Dance begins NOW!"
+    }
+  ],
+  "goal-messi": [
+    {
+      "file": "goal-messi-1.mp3",
+      "text": "GOOOOOL! MESSI! LIONEL MESSI SCORES! The little magician has done it again! Absolute brilliance! The crowd goes wild!"
+    },
+    {
+      "file": "goal-messi-2.mp3",
+      "text": "HE'S DONE IT! MESSIII! A touch of genius from the Argentine wizard! Nobody can stop this man! WHAT A GOAL!"
+    },
+    {
+      "file": "goal-messi-3.mp3",
+      "text": "MESSI SCORES! OH MY! THE GOAT STRIKES AGAIN! You just cannot write a better script than this! Incredible!"
+    }
+  ],
+  "goal-cristiano": [
+    {
+      "file": "goal-cristiano-1.mp3",
+      "text": "GOOOOOL! CRISTIANO RONALDO! WHAT A STRIKE! The man is simply unstoppable! SIUUUU! The fans are on their feet!"
+    },
+    {
+      "file": "goal-cristiano-2.mp3",
+      "text": "RONALDOOO! HE SMASHES IT IN! The power, the precision, the celebration! CR7 is built for these moments! SIUUU!"
+    },
+    {
+      "file": "goal-cristiano-3.mp3",
+      "text": "HE SCORES! CRISTIANO RONALDO! The machine does it again! Cold, clinical, devastating! Nobody does it like him!"
+    }
+  ],
+  "game-over-messi": [
+    {
+      "file": "game-over-messi-1.mp3",
+      "text": "And that is it! The final whistle blows! Messi wins The Last Dance! The greatest of all time has proven it once again on the biggest stage! What a match, what a night!"
+    },
+    {
+      "file": "game-over-messi-2.mp3",
+      "text": "It's all over! Lionel Messi takes the crown! The little genius from Rosario has done what he does best — make the impossible look easy. Messi wins!"
+    },
+    {
+      "file": "game-over-messi-3.mp3",
+      "text": "The Last Dance belongs to Messi! A performance for the ages! Years from now, people will talk about this night. Leo Messi — champion once more!"
+    }
+  ],
+  "game-over-cristiano": [
+    {
+      "file": "game-over-cristiano-1.mp3",
+      "text": "It's over! Cristiano Ronaldo wins The Last Dance! The machine, the legend, has conquered this historic showdown! An unforgettable performance from CR7!"
+    },
+    {
+      "file": "game-over-cristiano-2.mp3",
+      "text": "Cristiano Ronaldo has done it! The man who refuses to lose! Through sheer will and power, CR7 claims victory in The Last Dance!"
+    },
+    {
+      "file": "game-over-cristiano-3.mp3",
+      "text": "The king has spoken! Ronaldo wins The Last Dance! A legacy cemented in gold! This man simply does not know how to quit!"
+    }
+  ],
+  "fun-fact": [
+    {
+      "file": "fun-fact-1.mp3",
+      "text": "Did you know? Messi and Ronaldo have scored over 1,700 career goals combined. Absolutely staggering numbers."
+    },
+    {
+      "file": "fun-fact-2.mp3",
+      "text": "These two have dominated football for nearly two decades. We may never see a rivalry like this again."
+    },
+    {
+      "file": "fun-fact-3.mp3",
+      "text": "The tension in this stadium is unbelievable. Every touch, every pass — it all matters. This is what football is all about."
+    }
+  ]
+}

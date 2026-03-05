@@ -3,7 +3,7 @@ import { GameEvent } from '../types/events.ts';
 import { CommentaryOverlay } from '../ui/components/CommentaryOverlay.ts';
 import type { GoalScoredPayload, GameOverPayload } from '../types/events.ts';
 
-const MANIFEST_URL = '/audio/commentary/manifest.json';
+const MANIFEST_URL = import.meta.env.BASE_URL + 'audio/commentary/manifest.json';
 
 const FUN_FACT_INTERVAL_MS = 45_000;
 const FUN_FACT_COOLDOWN_MS = 20_000;
@@ -96,7 +96,7 @@ export class PreloadedCommentary {
     if (!entries) return [];
 
     return entries.map((entry) => {
-      const audio = new Audio(`/audio/commentary/${entry.file}`);
+      const audio = new Audio(`${import.meta.env.BASE_URL}audio/commentary/${entry.file}`);
       audio.preload = 'auto';
       return { text: entry.text, audio };
     });
